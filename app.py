@@ -6,6 +6,11 @@ from PIL import Image
 import cv2
 import base64
 import io
+import streamlit as st
+import os
+import zipfile
+
+st.write("APP STARTED")
 
 # ==========================================================
 # CUSTOM LAYERS (harus didefinisikan sebelum load model,
@@ -26,11 +31,18 @@ class ChannelMax(layers.Layer):
 # ==========================================================
 # KONFIGURASI
 # ==========================================================
+MODEL_ZIP = "best_model.zip"
 MODEL_PATH = "best_model.keras"
+
 IMG_SIZE = (224, 224)
 THRESHOLD = 0.5
-LAST_CONV_LAYER = "conv2d_22"  # cek ulang via model.summary() kalau error "layer not found"
-LABELS = {1: "Normal", 0: "Glaucoma"}  # sigmoid output = P(Normal)
+LAST_CONV_LAYER = "conv2d_22"
+LABELS = {1: "Normal", 0: "Glaucoma"}
+
+# Extract model jika belum ada
+if not os.path.exists(MODEL_PATH):
+    with zipfile.ZipFile(MODEL_ZIP, "r") as zip_ref:
+        zip_ref.extractall(".")
 
 st.set_page_config(page_title="Glaucoma Screening", page_icon="\U0001F441", layout="wide")
 
